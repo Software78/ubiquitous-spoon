@@ -3,3 +3,4 @@
 .fvm/
 **.lock
 build/
+.dart_tool/
