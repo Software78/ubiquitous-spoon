@@ -1,9 +1,13 @@
 import 'package:credpal_assessment/formatter.dart';
 import 'package:credpal_assessment/models.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
@@ -13,46 +17,52 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Credpal',
-      theme: ThemeData(
-        fontFamily: 'Avenir',
-        scaffoldBackgroundColor: Color(0xffF1F3FE),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xffF1F3FE),
-          elevation: 0,
-          centerTitle: true,
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            padding: EdgeInsets.zero,
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
-            ),
-            foregroundColor: Color(0xff274FED),
-            textStyle: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff274FED),
-            ),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
+    return ScreenUtilInit(
+      designSize: Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => MaterialApp(
+        title: 'Credpal',
+        theme: ThemeData(
+          fontFamily: 'Avenir',
+          scaffoldBackgroundColor: Color(0xffF1F3FE),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Color(0xffF1F3FE),
             elevation: 0,
-            backgroundColor: Color(0xFF274FED),
-            foregroundColor: Colors.white,
-            textStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-            fixedSize: Size(134, 36),
-            padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4),
+            centerTitle: true,
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+              foregroundColor: Color(0xff274FED),
+              textStyle: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color(0xff274FED),
+              ),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: Color(0xFF274FED),
+              foregroundColor: Colors.white,
+              textStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              fixedSize: Size(134, 36),
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
           ),
         ),
+        home: child,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      child: const MyHomePage(title: 'Credpal'),
     );
   }
 }
@@ -154,12 +164,15 @@ class _MyHomePageState extends State<MyHomePage> {
           SliverAppBar(
             backgroundColor: Color(0xffD0DAFF),
             expandedHeight: 140,
+            snap: true,
+            floating: true,
+
             flexibleSpace: FlexibleSpaceBar(
               background: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20.0,
-                    vertical: 30.0,
+                    vertical: 28.0,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -184,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           Spacer(flex: 10),
                           SvgPicture.asset('assets/icons/info.svg'),
-                          Spacer(flex: 2),
+                          Spacer(flex: 3),
                         ],
                       ),
                       Spacer(),
@@ -320,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           SliverToBoxAdapter(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               color: Colors.white,
               child: Column(
                 children: [
@@ -387,45 +400,87 @@ class ProductCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Center(
-            child: Image.asset(
-              product.image,
-              fit: BoxFit.fill,
-              width: 112,
-              height: 96,
-            ),
-          ),
-          Text(
-            product.title,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: Color(0xff1A1A1A),
-            ),
-          ),
-          Text.rich(
-            TextSpan(
-              text: discountedPrice.currencyFormat,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: Color(0xff274FED),
-              ),
-              children: [
-                TextSpan(text: ' '),
-                TextSpan(
-                  text: product.price.currencyFormat,
-                  style: TextStyle(
-                    fontSize: 12,
-                    decoration: TextDecoration.lineThrough,
-                    decorationColor: Color(0xffB3B3CC),
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xffB3B3CC),
+          Positioned.fill(child: Image.asset(product.image, fit: BoxFit.cover)),
+          Positioned(
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xff000000).withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
                   ),
+                ],
+              ),
+              child: Center(
+                child: Text.rich(
+                  TextSpan(
+                    text: 'Pay\n',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xffB3B3CC),
+                    ),
+                    children: [
+                      TextSpan(
+                        text: '40%',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff274FED),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned.fill(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Spacer(),
+                Text(
+                  product.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff1A1A1A),
+                  ),
+                ),
+                Text.rich(
+                  TextSpan(
+                    text: discountedPrice.currencyFormat,
+
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xff274FED),
+                    ),
+                    children: [
+                      TextSpan(text: ' '),
+                      TextSpan(
+                        text: product.price.currencyFormat,
+                        style: TextStyle(
+                          fontSize: 12,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: Color(0xffB3B3CC),
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xffB3B3CC),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
