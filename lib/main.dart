@@ -1,3 +1,4 @@
+import 'package:credpal_assessment/formatter.dart';
 import 'package:credpal_assessment/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -109,38 +110,38 @@ class _MyHomePageState extends State<MyHomePage> {
     Product(
       title: 'Nokia G20',
       image: 'assets/images/product_images/nokia.png',
-      price: 100,
+      price: 88000,
       discount: 10,
     ),
     Product(
       title: 'iPhone XS Max 4GB RAM 64GB ROM',
       image: 'assets/images/product_images/iphone.png',
-      price: 200,
+      price: 300000,
       discount: 20,
     ),
     Product(
       title: 'Masterchef Pressure Cooker',
       image: 'assets/images/product_images/pressure-cooker.png',
-      price: 300,
+      price: 150000,
       discount: 30,
     ),
     Product(
       title: 'Anker Soundcore Space One',
       image: 'assets/images/product_images/anker.png',
-      price: 400,
-      discount: 40,
+      price: 150000,
+      discount: 12,
     ),
     Product(
       title: 'iPhone 12 Pro',
       image: 'assets/images/product_images/iphone-12-pro.png',
-      price: 500,
-      discount: 50,
+      price: 650000,
+      discount: 15,
     ),
     Product(
       title: 'PS4 Controller',
       image: 'assets/images/product_images/ps4-controller.png',
-      price: 500,
-      discount: 50,
+      price: 30000,
+      discount: 5,
     ),
   ];
 
@@ -282,18 +283,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-
-          // Example: Horizontal list inside CustomScrollView
           SliverToBoxAdapter(
             child: Container(
-              height: 400, // Fixed height for horizontal list
+              height: 400,
               padding: EdgeInsets.symmetric(vertical: 14),
               color: Color(0xffF1F3FE),
               child: Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
+                    child: ListView.separated(
                       scrollDirection: Axis.horizontal,
+                      separatorBuilder: (context, index) => SizedBox(width: 16),
                       padding: EdgeInsets.symmetric(horizontal: 20),
                       itemCount: 3,
                       itemBuilder: (context, index) {
@@ -303,10 +303,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   SizedBox(height: 20),
                   Expanded(
-                    child: ListView.builder(
+                    child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       padding: EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: 3, // Replace with your item count
+                      separatorBuilder: (context, index) => SizedBox(width: 16),
+                      itemCount: 3,
                       itemBuilder: (context, index) {
                         return ProductCard(product: products[index + 3]);
                       },
@@ -365,17 +366,72 @@ class ProductCard extends StatelessWidget {
   const ProductCard({super.key, required this.product});
 
   final Product product;
+
+  double get discountedPrice =>
+      (product.price - (product.price * (product.discount / 100)));
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
+      width: 170,
       height: 200,
-      margin: EdgeInsets.only(right: 16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xff000000).withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-      child: Center(child: Text(product.title)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Image.asset(
+              product.image,
+              fit: BoxFit.fill,
+              width: 112,
+              height: 96,
+            ),
+          ),
+          Text(
+            product.title,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: Color(0xff1A1A1A),
+            ),
+          ),
+          Text.rich(
+            TextSpan(
+              text: discountedPrice.currencyFormat,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: Color(0xff274FED),
+              ),
+              children: [
+                TextSpan(text: ' '),
+                TextSpan(
+                  text: product.price.currencyFormat,
+                  style: TextStyle(
+                    fontSize: 12,
+                    decoration: TextDecoration.lineThrough,
+                    decorationColor: Color(0xffB3B3CC),
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xffB3B3CC),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
